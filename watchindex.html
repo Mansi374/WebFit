@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebFit - Smart Health Watch</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      background: url('Healthcare-Technology-Website.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .signup-container {
+      max-width: 400px;
+      margin: 80px auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .signup-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      padding: 60px 20px;
+      text-align: center;
+      color: white;
+      display: none;
+    }
+
+    .options {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .option-btn {
+      padding: 12px 30px;
+      background: white;
+      color: #0072ff;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 250px;
+    }
+
+    .option-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+    }
+
+    .metric label {
+      flex: 1;
+    }
+
+    .metric input {
+      flex: 2;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .back-btn {
+      margin-top: 20px;
+      display: block;
+      text-align: center;
+      background: #0072ff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      cursor: pointer;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Signup Page -->
+  <div class="signup-container" id="signup">
+    <h2>Create an Account</h2>
+    <input type="text" placeholder="Full Name" />
+    <input type="email" placeholder="Email Address" />
+    <input type="password" placeholder="Password" />
+    <button class="btn" onclick="handleSignup()">Sign Up</button>
+  </div>
+
+  <!-- Homepage -->
+  <div class="hero" id="homepage">
+    <h1>Welcome to WebFit</h1>
+    <p>Your smart health companion</p>
+  </div>
+
+  <!-- Dashboard Options -->
+  <div class="options" id="dashboard-options">
+    <button class="option-btn" onclick="showContainer('nutrition')">Nutrition Log</button>
+    <button class="option-btn" onclick="showContainer('workout')">Workout Tracker</button>
+    <button class="option-btn" onclick="showContainer('calculator')">Health Calculators</button>
+    <button class="option-btn" onclick="goBack()">← Back to Homepage</button>
+  </div>
+
+  <!-- Nutrition Section -->
+  <div class="container" id="nutrition">
+    <h2>Nutrition Log</h2>
+    <div class="metric">
+      <label for="calories">Calories:</label>
+      <input type="number" id="calories" />
+    </div>
+    <div class="metric">
+      <label for="protein">Protein (g):</label>
+      <input type="number" id="protein" />
+    </div>
+    <div class="metric">
+      <label for="fats">Fats (g):</label>
+      <input type="number" id="fats" />
+    </div>
+    <button class="btn" onclick="saveNutrition()">Save</button>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <div class="back-btn" onclick="goBack()">← Back</div>
+  </div>
+
+  <!-- Workout Section -->
+  <div class="container" id="workout">
+    <h2>Workout Tracker</h2>
+    <div class="metric">
+      <label for="exercise">Exercise:</label>
+      <input type="text" id="exercise" />
+    </div>
+    <div class="metric">
+      <label for="duration">Duration (min):</label>
+      <input type="number" id="duration" />
+    </div>
+    <button class="btn" onclick="logWorkout()">Log Workout</button>
+    <div class="back-btn" onclick="goBack()">← Back</div>
+  </div>
+
+  <!-- Calculator Section -->
+  <div class="container" id="calculator">
+    <h2>Health Calculator</h2>
+    <div class="metric">
+      <label for="weight">Weight (kg):</label>
+      <input type="number" id="weight" />
+    </div>
+    <div class="metric">
+      <label for="height">Height (cm):</label>
+      <input type="number" id="height" />
+    </div>
+    <button class="btn" onclick="calculateBMI()">Calculate BMI</button>
+    <div id="output"></div>
+    <div class="back-btn" onclick="goBack()">← Back</div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    function handleSignup() {
+      document.getElementById('signup').style.display = 'none';
+      document.getElementById('homepage').style.display = 'block';
+      document.getElementById('dashboard-options').style.display = 'flex';
+    }
+
+    function showContainer(id) {
+      const sections = ['nutrition', 'workout', 'calculator'];
+      sections.forEach(sec => {
+        document.getElementById(sec).style.display = (sec === id) ? 'block' : 'none';
+      });
+      document.getElementById('homepage').style.display = 'none';
+      document.getElementById('dashboard-options').style.display = 'none';
+    }
+
+    function goBack() {
+      const sections = ['nutrition', 'workout', 'calculator'];
+      sections.forEach(sec => document.getElementById(sec).style.display = 'none');
+      document.getElementById('homepage').style.display = 'block';
+      document.getElementById('dashboard-options').style.display = 'flex';
+      document.getElementById('output').innerHTML = '';
+    }
+
+    function calculateBMI() {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      if (!weight || !height || weight <= 0 || height <= 0) {
+        document.getElementById('output').innerText = 'Please enter valid, positive values.';
+        return;
+      }
+      const bmi = weight / ((height / 100) ** 2);
+      let category = '';
+      if (bmi < 18.5) category = 'Underweight';
+      else if (bmi < 24.9) category = 'Normal';
+      else if (bmi < 29.9) category = 'Overweight';
+      else category = 'Obese';
+      document.getElementById('output').innerHTML = `Your BMI is <b>${bmi.toFixed(2)}</b> (${category})`;
+    }
+
+    function saveNutrition() {
+      const protein = parseFloat(document.getElementById('protein').value) || 0;
+      const fats = parseFloat(document.getElementById('fats').value) || 0;
+      const carbs = 100 - protein - fats; // just for demo
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Protein', 'Fats', 'Carbs'],
+          datasets: [{
+            label: 'Macronutrients',
+            data: [protein, fats, carbs],
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56']
+          }]
+        }
+      });
+      alert("Nutrition data saved!");
+    }
+
+    function logWorkout() {
+      alert("Workout logged!");
+    }
+  </script>
+</body>
+</html>
