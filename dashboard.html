@@ -47,11 +47,6 @@
   </div>
 
   <script>
-    function showSection(id) {
-      document.querySelectorAll('.container').forEach(div => {
-        div.style.display = (div.id === id) ? 'block' : 'none';
-      });
-    }
 
     function saveNutrition() {
       const protein = parseFloat(document.getElementById('protein').value) || 0;
@@ -95,16 +90,27 @@
       });
     };
     function showSection(id) {
-    document.getElementById('welcome').style.display = 'none';
-    document.querySelectorAll('.container').forEach(div => {
-      div.classList.remove('show');
-      setTimeout(() => div.style.display = 'none', 500);
-    });
+  document.getElementById('welcome').style.display = 'none';
 
-    const target = document.getElementById(id);
-    target.style.display = 'block';
-    setTimeout(() => target.classList.add('show'), 10);
-  }
+  document.querySelectorAll('.container').forEach(div => {
+    if (div.id !== id) {
+      div.classList.remove('show');
+      setTimeout(() => {
+        if (!div.classList.contains('show')) {
+          div.style.display = 'none';
+        }
+      }, 500);
+    }
+  });
+
+  const target = document.getElementById(id);
+  target.style.display = 'block';
+  setTimeout(() => target.classList.add('show'), 10);
+
+  if (id !== 'calculator') document.getElementById('output').innerHTML = '';
+}
+
+
   </script>
 </body>
 </html>
