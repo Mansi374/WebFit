@@ -23,6 +23,18 @@
     object-fit: cover;
     z-index: -1;
   }
+  .container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    display: none;
+  }
 
   .signup-container {
     position: relative;
@@ -63,6 +75,13 @@
     background: #0056b3;
   }
 
+  .container {
+    opacity: 0;
+  }
+
+  .container.show {
+    opacity: 1;
+  }
 
   .dashboard-body {
     background: linear-gradient(to right, #0072ff, #00c6ff);
@@ -142,6 +161,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+
   .welcome-message {
     text-align: center;
     color: white;
