@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebFit Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+  <nav class="navbar">
+    <h1>WebFit</h1>
+    <div class="nav-links">
+      <button onclick="showSection('nutrition')">Nutrition</button>
+      <button onclick="showSection('workout')">Workout</button>
+      <button onclick="showSection('calculator')">Calculator</button>
+    </div>
+  </nav>
+  <div id="welcome" class="welcome-message">
+    <h2>Welcome to WebFit</h2>
+    <p>Select an option above to get started!</p>
+  </div>
+
+
+  <div id="nutrition" class="container" style="display:none;">
+    <h2>Nutrition Log</h2>
+    <input type="number" id="protein" placeholder="Protein (g)">
+    <input type="number" id="fats" placeholder="Fats (g)">
+    <button class="btn" onclick="saveNutrition()">Save</button>
+    <canvas id="myChart" width="400" height="200"></canvas>
+  </div>
+
+  <div id="workout" class="container" style="display:none;">
+    <h2>Workout Tracker</h2>
+    <input type="text" id="exercise" placeholder="Exercise">
+    <input type="number" id="duration" placeholder="Duration (min)">
+    <button class="btn" onclick="alert('Workout logged!')">Log Workout</button>
+  </div>
+
+  <div id="calculator" class="container" style="display:none;">
+    <h2>Health Calculator</h2>
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    <button class="btn" onclick="calculateBMI()">Calculate BMI</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('.container').forEach(div => {
+        div.style.display = (div.id === id) ? 'block' : 'none';
+      });
+    }
+
+    function saveNutrition() {
+      const protein = parseFloat(document.getElementById('protein').value) || 0;
+      const fats = parseFloat(document.getElementById('fats').value) || 0;
+      const carbs = 100 - protein - fats;
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Protein', 'Fats', 'Carbs'],
+          datasets: [{
+            label: 'Macronutrients',
+            data: [protein, fats, carbs],
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56']
+          }]
+        }
+      });
+      alert("Nutrition data saved!");
+    }
+
+    function calculateBMI() {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      if (!weight || !height || weight <= 0 || height <= 0) {
+        document.getElementById('output').innerText = 'Enter valid numbers';
+        return;
+      }
+      const bmi = weight / ((height / 100) ** 2);
+      let category = '';
+      if (bmi < 18.5) category = 'Underweight';
+      else if (bmi < 24.9) category = 'Normal';
+      else if (bmi < 29.9) category = 'Overweight';
+      else category = 'Obese';
+      document.getElementById('output').innerHTML = `Your BMI is <b>${bmi.toFixed(2)}</b> (${category})`;
+    }
+
+    window.onload = function () {
+
+      document.querySelectorAll('.container').forEach(div => {
+        div.style.display = 'none';
+      });
+    };
+    function showSection(id) {
+    document.getElementById('welcome').style.display = 'none';
+    document.querySelectorAll('.container').forEach(div => {
+      div.classList.remove('show');
+      setTimeout(() => div.style.display = 'none', 500);
+    });
+
+    const target = document.getElementById(id);
+    target.style.display = 'block';
+    setTimeout(() => target.classList.add('show'), 10);
+  }
+  </script>
+</body>
+</html>
